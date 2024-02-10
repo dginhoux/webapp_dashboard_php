@@ -6,26 +6,29 @@
 
 It's my own PHP web Dashboard. <br />
 It use bootstrap, jquery and bootswatch for better UI.
-<br >
-<br >
-May be difficult to out of the box : <br />
-* use traefik API to list publisheds app
-* use docker API to get my 2 swarms clusters informations
-* read tls certs files
-<br />
-<br />
-<br />
-A little dirty, all in 3 PHP files : index, config, functions.
+
 
 
 ## FEATURES
 
-* dynamix apps from traefik reverse proxy
+* dynamix apps lists from traefik reverse proxy
 * dns resolver test
 * disk usage of specified mount point
 * display docker swarm informations
 * custom url content
-* integrate some grafana embedded panels
+* integratation of grafana embedded panels
+
+
+## WARNING
+
+May be difficult to out of the box : <br />
+* use traefik API to list publisheds apps
+* use docker socket tcp API to get my 2 swarms clusters informations
+* read tls certs files from a folder
+<br />
+<br />
+<br />
+**A little dirty ** all in 3 PHP files : index, config, functions.
 
 
 ## EXAMPLES
@@ -40,10 +43,10 @@ PHP v7.x, PHP v8.x<br />
 
 #### INCLUDEDS DEPENDENCIES
 
-* jquery
-* bootstrap
+* jquery : https://jquery.com
+* bootstrap : https://getbootstrap.com
 
-Updates must be manually
+Updates must be manually in ./lib folder and specify used version in config.php
 
 #### SUBMODULES DEPENDENCIES
 
