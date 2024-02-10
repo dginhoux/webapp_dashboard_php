@@ -25,7 +25,12 @@ A little dirty, all in 3 PHP files : index, config, functions.
 * disk usage of specified mount point
 * display docker swarm informations
 * custom url content
+* integrate some grafana embedded panels
 
+
+## EXAMPLES
+
+![example.png](example.png)
 
 
 ## REQUIREMENTS
