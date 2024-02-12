@@ -4,7 +4,7 @@
 date_default_timezone_set('UTC');
 
 
-$is_debug = true;
+$is_debug = false;
 
 
 $apps_nb_cols = 4;

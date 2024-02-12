@@ -34,7 +34,7 @@ echo "<!doctype html>
     <script src=\"lib/$bootstrap_version/js/bootstrap.bundle.min.js\"></script>
 
     <style>
-      html {font-size:0.9rem;} /*1rem = 14px*/
+      html {font-size:0.8rem;} /*1rem = 14px*/
       @media (min-width: 544px) {
         html {font-size:0.9rem;} /*1rem = 14px*/
       }
@@ -171,6 +171,13 @@ echo "<main role=\"main\">
     </div>";
 
 
+    $apps_pos = 0;
+    $apps_list = get_apps_list($traefik_api_url, $traefik_api_routers_exclude_rule, $links_apps);
+    $total_apps_list = count($apps_list);
+    $apps_nb_per_cols = round($total_apps_list / $apps_nb_cols, 0) +1;
+    $apps_list2 = array_chunk($apps_list, $apps_nb_per_cols, true);
+    // echo "$apps_nb_per_cols __ $total_apps_list __ ";
+    // echo "<pre>" . print_r($apps_list2, true) . "</pre>";
     echo "<div class=\"container-fluid px-lg-5\">
       <div class=\"row\">
         <div class=\"col\">
@@ -184,13 +191,6 @@ echo "<main role=\"main\">
         </div>
       </div>
       <div class=\"row\">";
-      $apps_pos = 0;
-      $apps_list = get_apps_list($traefik_api_url, $traefik_api_routers_exclude_rule, $links_apps);
-      $total_apps_list = count($apps_list);
-      $apps_nb_per_cols = round($total_apps_list / $apps_nb_cols, 0) +1;
-      $apps_list2 = array_chunk($apps_list, $apps_nb_per_cols, true);
-      // echo "$apps_nb_per_cols __ $total_apps_list __ ";
-      // echo "<pre>" . print_r($apps_list2, true) . "</pre>";
       for ($i = 0; $i < $apps_nb_cols; $i++) {
         echo "<div class=\"col\">";
           echo "<div class=\"table-responsive\">
@@ -230,6 +230,7 @@ echo "<main role=\"main\">
 
         echo "</div>";
       }
+      
       echo "
       </div>
     </div>";
@@ -311,13 +312,14 @@ echo "<main role=\"main\">
 
 
           if ( is_auth() ) {
+            $links_internals_list = get_internals_list( $traefik_api_url, $links_internals );
             echo "<div class=\"table-responsive\">
             <table class=\"table table-lg table-borderless table-responsive\">
             <thead class=\"thead-light\">
               <tr><th class=\"fs-3 fw-bold text-uppercase\" scope=\"col\">internals links</th></tr>
             </thead>
             <tbody>";
-              foreach ( get_internals_list( $traefik_api_url, $links_internals ) as $app ) {
+              foreach ( $links_internals_list as $app ) {
                 $item_color = "link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover text text-primary fw-bold";
                 $app_scheme = parse_url($app['url'], PHP_URL_SCHEME);
                 $app_name = preg_replace('#^https?://#', '', rtrim($app['url'],'/'));
@@ -466,14 +468,14 @@ echo "<main role=\"main\">
         }
 
 
+        $docker_pxe_nodes_status_list = get_docker_nodes_status( $docker_pxe_api_url );
         echo "<div class=\"table-responsive\">
         <table class=\"table table-lg table-borderless table-responsive\">
         <thead class=\"thead-light\">
           <tr><th class=\"fs-3 fw-bold text-uppercase\" scope=\"col\">docker pxe</th></tr>
         </thead>
         <tbody>";
-          $docker_nodes_status_list = get_docker_nodes_status( $docker_pxe_api_url );
-          foreach ($docker_nodes_status_list as $node) {
+          foreach ($docker_pxe_nodes_status_list as $node) {
             if ( $node["NodeStatus"] == "ready" ) {
               $title_color = "primary";
               $item_color = "light";
@@ -537,14 +539,14 @@ echo "<main role=\"main\">
 
 
 
-
+        $links_others_list = get_others_services( $links_others );
         echo "<div class=\"table-responsive\">
         <table class=\"table table-lg table-borderless table-responsive\">
         <thead class=\"thead-light\">
           <tr><th class=\"fs-3 fw-bold text-uppercase\" scope=\"col\">others links</th></tr>
         </thead>
         <tbody>";
-          foreach ( get_others_services( $links_others ) as $app ) {
+          foreach ( $links_others_list as $app ) {
             $item_color = "link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover text text-primary fw-bold";
             $app_scheme = parse_url($app['url'], PHP_URL_SCHEME);
             if ( $app_scheme == "http" ) {
@@ -564,15 +566,15 @@ echo "<main role=\"main\">
         </table>
         </div>";
 
-
+      
+        $docker_swarm_nodes_status_list = get_docker_nodes_status( $docker_swarm_api_url );
         echo "<div class=\"table-responsive\">
         <table class=\"table table-lg table-borderless table-responsive\">
         <thead class=\"thead-light\">
           <tr><th class=\"fs-3 fw-bold text-uppercase\" scope=\"col\">docker swarm</th></tr>
         </thead>
         <tbody>";
-          $docker_nodes_status_list = get_docker_nodes_status( $docker_swarm_api_url );
-          foreach ($docker_nodes_status_list as $node) {
+          foreach ($docker_swarm_nodes_status_list as $node) {
             if ( $node["NodeStatus"] == "ready" ) {
               $title_color = "primary";
               $item_color = "light";
@@ -773,8 +775,28 @@ echo "<main role=\"main\">
 
 $microtime_stop = func_microtime_float();
 // echo "<div class=\"alert alert-secondary\" role=\"alert\">";
-echo "<p class=\"text-sm-end fs-6 fst-italic text-secondary text-opacity-50\">";
-echo "page générée en " . round($microtime_stop - $microtime_start, 3) . "s&nbsp;";
+echo "<p class=\"text-sm-end fs-8 fst-italic text-secondary text-opacity-50\">";
+
+echo "" . $total_apps_list . " applications |";
+echo "&nbsp;";
+echo "" . count($docker_pxe_nodes_status_list) . " docker pxe nodes |";
+echo "&nbsp;";
+echo "" . count($docker_swarm_nodes_status_list) . " docker swarm nodes |";
+echo "&nbsp;";
+echo "" . count($links_others_list) . " others links |";
+echo "&nbsp;";
+echo "" . count($links_internals_list) . " internals links |";
+echo "&nbsp;";
+echo "" . count($links_knocking) . " knoocking links |";
+echo "&nbsp;";
+echo "" . count($disk_space) . " disk usage |";
+echo "&nbsp;";
+echo "" . count($dns_list) . " dns resolution |";
+echo "&nbsp;";
+echo "" . count($tls_cert_file) . " certificates |";
+echo "&nbsp;";
+echo "" . round($microtime_stop - $microtime_start, 3) . "s rendering time";
+echo "&nbsp;";
 echo "</p>";
 // echo "</div>";
 
