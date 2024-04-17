@@ -1,16 +1,36 @@
 <?php
 
 
+error_reporting(0);
+
+
 date_default_timezone_set('UTC');
 
 
-$is_debug = false;
+$is_debug = true;
 
 
 $apps_nb_cols = 4;
 
 
-$default_theme = "spacelab"; 
+// $navbar_bg = "dark";
+// $item_color_default = "dark";
+// $link_color_default = "dark";
+// $detail_color_default = "dark-emphasis";
+$navbar_bg = "black";
+$navlink_color_default = "primary";
+$item_color_default = "primary";
+$link_color_default = "primary";
+$detail_color_default = "secondary";
+
+
+$section_class = "fs-4  fw-bold  text-uppercase";
+$link_class = "fw-semibold  text-decoration-none  text-lowercase  link-$link_color_default  link-opacity-75  link-opacity-100-hover  link-offset-2  link-underline-opacity-0  link-underline-opacity-100-hover";
+$item_class = "fw-semibold  text-decoration-none  text-lowercase";
+$progress_class = "progress-bar-striped  progress-bar-animated  fw-bold  overflow-visible";
+
+
+$default_theme = ""; 
 $theme_folder = "lib/bootswatch/dist";
 
 
@@ -78,14 +98,14 @@ $links_others[] = "http://shreckbull.free.fr";
 
 
 $links_knocking = array();
-$links_knocking[] = "https://gnet-router50.ddns.net:7001";
-$links_knocking[] = "https://gnet-router50.ddns.net:7002";
-$links_knocking[] = "https://gnet-router50.ddns.net:7003";
-$links_knocking[] = "https://gnet-router50.ddns.net:28443";
-$links_knocking[] = "https://gnet-router70.ddns.net:7001";
-$links_knocking[] = "https://gnet-router70.ddns.net:7002";
-$links_knocking[] = "https://gnet-router70.ddns.net:7003";
-$links_knocking[] = "https://gnet-router70.ddns.net:28443";
+$links_knocking[] = "https://gnet-router50.freeboxos.fr:7001";
+$links_knocking[] = "https://gnet-router50.freeboxos.fr:7002";
+$links_knocking[] = "https://gnet-router50.freeboxos.fr:7003";
+$links_knocking[] = "https://gnet-router50.freeboxos.fr:28443";
+$links_knocking[] = "https://gnet-router70.freeboxos.fr:7001";
+$links_knocking[] = "https://gnet-router70.freeboxos.fr:7002";
+$links_knocking[] = "https://gnet-router70.freeboxos.fr:7003";
+$links_knocking[] = "https://gnet-router70.freeboxos.fr:28443";
 
 
 $links_internals  = array();
@@ -112,11 +132,11 @@ $traefik_api_routers_exclude_rule[] = "HostRegexp(`{host:.+}`)";
 $traefik_api_routers_exclude_rule[] = "PathPrefix(`/ping`)";
 $traefik_api_routers_exclude_rule[] = "PathPrefix(`/metrics`)";
 $traefik_api_routers_exclude_rule[] = "HostRegexp(`{host:.+}`)";
-foreach ( $managed_domains as $domain ) {
-  $traefik_api_routers_exclude_rule[] = "Host(`authelia.$domain`)";
+// foreach ( $managed_domains as $domain ) {
+//   $traefik_api_routers_exclude_rule[] = "Host(`authelia.$domain`)";
   // $traefik_api_routers_exclude_rule[] = "Host(`dashboard.$domain`)";
   // $traefik_api_routers_exclude_rule[] = "Host(`auth.$domain`)";
-}
+// }
 
 
 $tls_cert_file = array();
@@ -124,6 +144,7 @@ $tls_cert_file[] = "/lego-certs/_.ginhoux.app.crt";
 $tls_cert_file[] = "/lego-certs/_.ginhoux.net.crt";
 $tls_cert_file[] = "/lego-certs/_.ginhoux.org.crt";
 $tls_cert_file[] = "/lego-certs/_.mystack.fr.crt";
+
 
 // $domains_tls_test[10]["url"] = "https://auth2.ginhoux.app";
 // $domains_tls_test[10]["port"] = 443;

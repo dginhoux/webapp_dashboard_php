@@ -393,21 +393,35 @@ function get_apps_list($traefik_api_url, $traefik_api_routers_exclude_rule, $lin
     foreach ($traefik_api_routers_json as $traefik_router) {
       $traefik_router_rule = $traefik_router['rule'];
       if ( in_array($traefik_router_rule, $traefik_api_routers_exclude_rule) ) { continue; }
-      if ( str_contains($traefik_router_rule, "PathPrefix") ) { continue; }
+      // if ( str_contains($traefik_router_rule, "PathPrefix") ) { continue; }
       if ( isset($traefik_router['entryPoints']) and in_array("traefikhub-api", $traefik_router['entryPoints']) ) { continue; }
 
-      $traefik_router_rule = str_replace("Host(`", "", $traefik_router_rule);
-      $traefik_router_rule = str_replace("`)", "", $traefik_router_rule);
+      ## remove special char
+      $traefik_router_rule = str_replace("`", "", $traefik_router_rule);
 
-      // echo "<pre>" . print_r($traefik_router, true) . "</pre>";
+      ## ONLY HOST WILL BE USED !!!
+      ## for split multiple "Host rules"
+      preg_match_all("/Host\(([^()]+)\)/", $traefik_router_rule, $traefik_router_rule_host_list);
+      foreach( $traefik_router_rule_host_list[1] as $traefik_router_rule_host_multiple ) {
 
-      $services[$i]['url'] = "$traefik_router_rule";
-      $services[$i]['icon'] = find_icon("https://" . $traefik_router_rule);
-      $services[$i]['entryPoints'] = $traefik_router['entryPoints'];
-      // $services[$i]['middlewares'] = $traefik_router['middlewares'];
-      $services[$i]['provider'] = $traefik_router['provider'];
-      
-      $i++;
+        ## for split multiple name separated by comma in an Host rule
+        $traefik_router_rule_host_multiple_list = explode(",", $traefik_router_rule_host_multiple);
+        foreach( $traefik_router_rule_host_multiple_list as $traefik_router_rule_host ) {
+
+          ## remove "Host(" and ")"
+          $traefik_router_rule_host = str_replace("Host(", "", $traefik_router_rule_host);
+          $traefik_router_rule_host = str_replace(")", "", $traefik_router_rule_host);
+          $traefik_router_rule_host = str_replace(" ", "", $traefik_router_rule_host);
+
+          $services[$i]['url'] = "$traefik_router_rule_host";
+          $services[$i]['icon'] = find_icon("https://" . $traefik_router_rule_host);
+          $services[$i]['entryPoints'] = $traefik_router['entryPoints'];
+          // $services[$i]['middlewares'] = $traefik_router['middlewares'];
+          $services[$i]['provider'] = $traefik_router['provider'];
+          
+          $i++;
+        }
+      }
     }
   }
 
